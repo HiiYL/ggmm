@@ -11,11 +11,14 @@ import numbers
 import numpy as np
 import sys
 
+
+
 from scipy import linalg
 
 EPS = np.finfo(float).eps
 
 logger = logging.getLogger(__name__)
+
 
 
 def init(max_ones=(1024*256)):
@@ -224,7 +227,7 @@ class TempGPUMem(dict):
                 'TempGPUMem: alloc(N, K, D) or alloc(key_shape_mapping)')
 
         # allocate memory
-        for key, shape in key_shape_mapping.iteritems():
+        for key, shape in key_shape_mapping.items():
             if key not in self:
                 logger.debug('%s: created %s at key %s',
                              sys._getframe().f_code.co_name,
@@ -342,8 +345,8 @@ class GMM(object):
         if np.any(covars_ < self.min_covar):
             covars_[covars_ < self.min_covar] = self.min_covar
             if self.verbose:
-                print 'input covars less than min_covar (%g) ' \
-                    'have been set to %g' % (self.min_covar, self.min_covar)
+                print('input covars less than min_covar (%g) ' \
+                    'have been set to %g' % (self.min_covar, self.min_covar))
 
         self.covars = return_CUDAMatrix(covars_)
 
@@ -569,7 +572,7 @@ class GMM(object):
 
         max_log_prob = -np.infty
 
-        for _ in xrange(n_init):
+        for _ in range(n_init):
             if 'm' in init_params or self.means is None:
                 perm = random_state.permutation(n_samples)
                 self.means = return_CUDAMatrix(X[perm[:self.n_components]])
@@ -590,7 +593,7 @@ class GMM(object):
             # EM algorithms
             log_likelihood = []
             converged = False
-            for i in xrange(n_iter):
+            for i in range(n_iter):
                 # Expectation step
                 curr_log_likelihood, posteriors = self.score_samples(
                     X_gpu, temp_gpu_mem)
@@ -602,9 +605,9 @@ class GMM(object):
                 else:
                     change = np.inf
                 if verbose:
-                    print 'Iter: %u, log-likelihood: %g ' \
+                    print('Iter: %u, log-likelihood: %g ' \
                         '(change = %g)' % (
-                            i, curr_log_likelihood_sum, change)
+                            i, curr_log_likelihood_sum, change))
 
                 # Check for convergence.
                 if change < thresh:
